@@ -1,0 +1,87 @@
+# État d'Avancement du Projet
+
+## Plateforme d'Évaluation Automatisée des Exercices de Bases de Données
+
+### État Actuel
+
+Le projet est en cours de développement et comprend les fonctionnalités suivantes :
+
+1. **Gestion des utilisateurs** :
+   - Authentification des utilisateurs (étudiants et professeurs).
+   - Création et gestion des comptes.
+
+2. **Gestion des exercices** :
+   - Création, modification et suppression d'exercices par les professeurs.
+   - Soumission des réponses par les étudiants.
+
+3. **Tableaux de bord** :
+   - Tableau de bord pour les professeurs avec statistiques sur les exercices et les soumissions.
+   - Tableau de bord pour les étudiants avec accès aux exercices disponibles et à leurs soumissions.
+
+4. **Intégration de l'IA** :
+   - Préparation pour l'intégration d'un moteur d'intelligence artificielle pour la correction automatique des exercices.
+
+### Ce Qui Reste à Faire
+
+1. **Finaliser l'intégration de l'IA** :
+   - Implémenter la logique de correction automatique des exercices soumis.
+   - Tester et valider les résultats de l'IA.
+
+2. **Améliorer l'interface utilisateur** :
+   - Ajouter des animations et des améliorations UX/UI.
+   - Tester la réactivité sur différents appareils.
+
+3. **Tests et Débogage** :
+   - Écrire des tests unitaires et d'intégration pour assurer la qualité du code.
+   - Corriger les bugs identifiés lors des tests.
+
+4. **Documentation** :
+   - Compléter la documentation du code et des fonctionnalités.
+   - Rédiger un manuel utilisateur détaillé.
+
+### Instructions pour Installer le Projet
+
+Pour que votre collaborateur puisse installer le projet et continuer l'implémentation, voici les étapes à suivre :
+
+1. **Cloner le dépôt** :
+   ```bash
+   git clone https://votre-repo-url.git
+   cd votre-repo
+   ```
+
+2. **Installer les dépendances** :
+   - Pour le backend :
+     ```bash
+     cd backend
+     pip install -r requirements.txt
+     ```
+
+   - Pour le frontend :
+     ```bash
+     cd frontend
+     npm install
+     ```
+
+3. **Configurer l'environnement** :
+   - Créer un fichier `.env` dans le dossier `backend` et y ajouter les variables d'environnement nécessaires (voir le fichier `.env` existant pour les exemples).
+
+4. **Initialiser la base de données** :
+   - Exécuter le script d'initialisation de la base de données :
+     ```bash
+     python init_db.py
+     ```
+
+5. **Démarrer le serveur** :
+   - Pour le backend :
+     ```bash
+     uvicorn app.main:app --reload
+     ```
+
+   - Pour le frontend :
+     ```bash
+     npm start
+     ```
+
+### Conclusion
+
+Ce projet vise à fournir une plateforme d'évaluation automatisée pour les exercices de bases de données, intégrant des fonctionnalités avancées et une interface utilisateur moderne. La collaboration et la contribution de chacun sont essentielles pour mener à bien ce projet.

@@ -1,0 +1,129 @@
+Projet : Plateforme intelligente d'évaluation
+automatisée des exercices de bases de
+données
+Contexte et objectifs
+L'objectif de ce projet est de concevoir et développer une plateforme web permettant aux
+professeurs de déposer des sujets d’exercices en bases de données et aux étudiants de
+soumettre leurs réponses sous forme de fichiers PDF.
+
+L’application intégrera un moteur d’intelligence artificielle basé sur DeepSeek via Ollama
+pour :
+
+   •   Générer une correction automatique des exercices soumis.
+   •   Comparer la copie de l’étudiant avec la correction pour attribuer une note sur 20.
+   •   Fournir un retour détaillé aux étudiants sur leurs erreurs et pistes d’amélioration.
+
+En plus de la correction automatique, la plateforme mettra l’accent sur l’ergonomie, la
+sécurité et la scalabilité pour assurer une expérience fluide aux utilisateurs.
+
+
+
+
+Fonctionnalités attendues
+1. Gestion des utilisateurs et des rôles
+
+   •   Compte professeur
+         o Création et gestion des comptes.
+         o Dépôt de sujets d’examen en format texte/PDF.
+         o Ajout de plusieurs modèles de correction pour chaque exercice.
+         o Consultation et ajustement des notes générées par l’IA.
+         o Accès à un tableau de bord détaillé avec statistiques des performances des
+            étudiants.
+   •   Compte étudiant
+         o Création et gestion des comptes (avec authentification classique ou via
+            Google/Microsoft/GitHub).
+         o Accès aux sujets déposés par les professeurs.
+         o Soumission de réponses en format PDF (avec Drag & Drop).
+         o Consultation des corrections automatiques et des notes attribuées.
+         o Suivi des performances avec des graphiques d’évolution.
+
+
+
+
+2. Interface Web intuitive et moderne
+   •   Frontend dynamique et responsive développé avec React.js ou Vue.js et stylisé
+       avec Tailwind CSS ou Material UI.
+   •   Expérience utilisateur optimisée avec animations, Dark Mode et notifications en
+       temps réel.
+   •   Tableaux de bord interactifs avec Recharts ou Chart.js pour la visualisation des
+       statistiques des étudiants et enseignants.
+
+
+
+3. Intégration avancée de l’IA (DeepSeek via Ollama)
+
+   •   Correction automatique basée sur un modèle pré-entraîné spécialisé en bases de
+       données.
+   •   Analyse syntaxique des requêtes SQL (si applicable) pour vérifier leur validité.
+   •   Notation intelligente prenant en compte différentes approches de réponse.
+   •   Génération d'un feedback détaillé expliquant les erreurs et suggérant des
+       améliorations.
+   •   Apprentissage automatique : possibilité pour les professeurs d’affiner la correction
+       et d’améliorer progressivement l’IA.
+
+
+
+4. Sécurité et gestion des accès
+
+   •   Authentification renforcée via OAuth2 (Google, Microsoft, GitHub) en plus des
+       comptes classiques.
+   •   Chiffrement des fichiers PDF soumis par les étudiants pour garantir la
+       confidentialité.
+   •   Détection de plagiat via des algorithmes de similarité (Jaccard, TF-IDF, NLP).
+
+
+
+5. Tableau de bord et analyse des performances
+
+   •   Côté étudiant
+          o Affichage des performances passées et progression dans le temps.
+          o Comparaison des notes avec la moyenne de la classe.
+   •   Côté professeur
+          o Statistiques sur le nombre de soumissions, taux de réussite, questions mal
+              comprises.
+          o Identification des tendances d’apprentissage pour améliorer les futurs
+              exercices.
+
+
+
+6. Déploiement et scalabilité
+
+   •   Microservices pour séparer les services (authentification, IA, stockage).
+   •   Stockage cloud optimisé via AWS S3, Google Cloud Storage ou MinIO.
+   •   Déploiement automatisé avec Docker, GitHub Actions et Kubernetes pour assurer
+       la scalabilité.
+
+
+
+
+Technologies suggérées
+   Catégorie                         Technologies proposées
+Frontend          React.js / Vue.js, Tailwind CSS / Material UI
+Backend           Django (Python) / Node.js (Express)
+Base de données PostgreSQL / MongoDB / MySQL
+IA & NLP          Ollama + DeepSeek
+Stockage fichiers AWS S3, Firebase Storage, MinIO
+Déploiement       Docker, Kubernetes, VPS (DigitalOcean, AWS, GCP, Azure)
+Sécurité          OAuth2, chiffrement des fichiers, détection de plagiat
+
+
+
+Livrables attendus
+   1. Code source documenté et versionné sur GitHub/GitLab.
+   2. Rapport technique expliquant l’architecture, les choix technologiques et
+      l’implémentation.
+   3. Démo fonctionnelle de la plateforme déployée en ligne.
+   4. Manuel utilisateur détaillant les fonctionnalités pour les professeurs et étudiants.
+
+
+
+Conclusion
+
+Ce projet offre une expérience complète et immersive aux étudiants en leur permettant de
+travailler sur plusieurs aspects du développement web, de l’intelligence artificielle et de la
+gestion de données.
+
+La plateforme propose une correction automatique avancée, un système de notation
+intelligente, et un tableau de bord analytique pour améliorer la pédagogie et l’apprentissage
+des bases de données.
+
