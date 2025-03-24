@@ -3,6 +3,7 @@ FROM python:3.11-slim
 # Définir les variables d'environnement
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
 
 WORKDIR /app
 

@@ -1,4 +1,5 @@
 import multiprocessing
+import os
 
 # Configuration des workers
 workers = 2  # Réduit de 4 à 2 pour limiter la consommation de mémoire
@@ -20,4 +21,5 @@ errorlog = '-'
 loglevel = 'info'
 
 # Configuration du binding
-bind = '0.0.0.0:$PORT' 
+port = os.getenv('PORT', '8000')
+bind = f'0.0.0.0:{port}' 
