@@ -4,9 +4,11 @@ import { FaBook, FaChartLine, FaHistory, FaUpload, FaCheck, FaExclamationTriangl
 import axios from 'axios';
 import { API_URL } from '../../config/api';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 const StudentDashboard = () => {
     const { darkMode } = useTheme();
+    const { user } = useAuth();
     const [exercises, setExercises] = useState([]);
     const [submissions, setSubmissions] = useState([]);
     const [stats, setStats] = useState(null);
@@ -17,8 +19,10 @@ const StudentDashboard = () => {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (user) {
+            fetchData();
+        }
+    }, [user]);
 
     const fetchData = async () => {
         try {
@@ -28,10 +32,9 @@ const StudentDashboard = () => {
                     headers: { 'Authorization': `Bearer ${token}` }
                 }),
                 axios.get(`${API_URL}/submissions/`, {
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    params: { include_exercise: true }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 }),
-                axios.get(`${API_URL}/statistics/student/${localStorage.getItem('userId')}`, {
+                axios.get(`${API_URL}/statistics/student/${user.id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
             ]);
@@ -53,13 +56,26 @@ const StudentDashboard = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!selectedFile || !selectedExercise) return;
+        if (!selectedFile || !selectedExercise) {
+            setError('Veuillez sélectionner un fichier et un exercice');
+            return;
+        }
 
         setSubmitting(true);
         try {
             const formData = new FormData();
             formData.append('file', selectedFile);
+            
+            console.log('Soumission de fichier:', {
+                exerciseId: selectedExercise.id,
+                fileName: selectedFile.name,
+                fileSize: selectedFile.size,
+                fileType: selectedFile.type
+            });
 
+            // L'API attend le paramètre exercise_id en tant que FormData, pas en tant que query parameter
+            formData.append('exercise_id', selectedExercise.id);
+            
             const token = localStorage.getItem('token');
             await axios.post(
                 `${API_URL}/submissions/`,
@@ -68,19 +84,23 @@ const StudentDashboard = () => {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'
-                    },
-                    params: {
-                        exercise_id: selectedExercise.id
                     }
                 }
             );
 
+            console.log('Soumission réussie');
             setSelectedFile(null);
             setSelectedExercise(null);
             fetchData();
+            setError('');
         } catch (err) {
-            setError('Erreur lors de la soumission');
-            console.error('Error submitting:', err);
+            console.error('Error submitting:', {
+                message: err.message,
+                status: err.response?.status,
+                statusText: err.response?.statusText,
+                data: err.response?.data
+            });
+            setError(err.response?.data?.detail || 'Erreur lors de la soumission');
         } finally {
             setSubmitting(false);
         }
@@ -269,14 +289,18 @@ const StudentDashboard = () => {
                                     >
                                         <div className="flex items-center justify-between mb-2">
                                             <h3 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                                {submission.exercise?.title || 'Exercice non trouvé'}
+                                                {submission.exercise_title || 'Exercice non trouvé'}
                                             </h3>
                                             <span className={`px-2 py-1 rounded-full text-xs ${
-                                                submission.status === 'corrected'
+                                                submission.status === 'graded'
                                                     ? 'bg-green-100 text-green-800'
-                                                    : 'bg-yellow-100 text-yellow-800'
+                                                    : submission.status === 'pending'
+                                                    ? 'bg-yellow-100 text-yellow-800'
+                                                    : 'bg-red-100 text-red-800'
                                             }`}>
-                                                {submission.status === 'corrected' ? 'Corrigé' : 'En attente'}
+                                                {submission.status === 'graded' ? 'Corrigé' : 
+                                                 submission.status === 'pending' ? 'En attente' : 
+                                                 'Erreur'}
                                             </span>
                                         </div>
                                         <p className={`text-sm mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -286,6 +310,17 @@ const StudentDashboard = () => {
                                             <p className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                                 Note: {submission.grade}/20
                                             </p>
+                                        )}
+                                        {submission.feedback && (
+                                            <div className={`mt-2 p-3 rounded-lg ${
+                                                darkMode 
+                                                    ? 'bg-dark-accent border border-gray-700' 
+                                                    : 'bg-gray-50 border border-gray-200'
+                                            }`}>
+                                                <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                                    {submission.feedback}
+                                                </p>
+                                            </div>
                                         )}
                                     </motion.div>
                                 ))}

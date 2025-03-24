@@ -75,7 +75,7 @@ async def search_submissions(
     if sort_by == "score":
         sort_column = SubmissionModel.score
     else:
-        sort_column = SubmissionModel.submitted_at
+        sort_column = SubmissionModel.created_at
 
     if sort_order == "asc":
         query = query.order_by(asc(sort_column))

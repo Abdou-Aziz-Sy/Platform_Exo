@@ -74,11 +74,8 @@ class AIEvaluator:
             if not submitted_queries:
                 return {
                     "grade": 0,
-                    "feedback": "Aucune requête SQL n'a été trouvée dans votre soumission. Assurez-vous que votre fichier contient des requêtes SQL valides et qu'elles sont correctement formatées.",
-                    "criteria_scores": {},
-                    "improvement_suggestions": ["Vérifiez que vos requêtes SQL sont bien présentes dans le fichier",
-                                             "Assurez-vous que les requêtes sont correctement formatées",
-                                             "Évitez d'utiliser des images pour les requêtes, utilisez du texte"]
+                    "feedback": "Aucune requête SQL n'a été trouvée dans votre soumission. Veuillez soumettre des requêtes SQL valides.",
+                    "criteria_scores": {}
                 }
             
             if not correction_queries:
@@ -110,13 +107,13 @@ class AIEvaluator:
                 2. Performance et optimisation
                 3. Bonnes pratiques
                 4. Suggestions d'amélioration concrètes
-
+                
                 Requête soumise :
                 {submitted}
-
+                
                 Correction attendue :
                 {correction}
-
+                
                 EXEMPLE DE RÉPONSE ATTENDUE :
                 {{
                     "feedback": "La requête est syntaxiquement correcte et produit les résultats attendus. L'utilisation de JOIN est appropriée, mais pourrait être optimisée avec LEFT JOIN pour inclure tous les enregistrements. La clause WHERE est bien construite. Les alias de tables sont utilisés correctement. Cependant, l'absence de DISTINCT pourrait conduire à des doublons dans certains cas.",
@@ -142,7 +139,7 @@ class AIEvaluator:
                     temperature=0.1,
                     max_tokens=800
                 )
-
+                
                 try:
                     # Nettoyer la réponse
                     cleaned_response = response.strip()

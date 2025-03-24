@@ -1,10 +1,31 @@
 FROM python:3.11-slim
 
+# Définir les variables d'environnement
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
+# Installer les dépendances système nécessaires
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copier et installer les dépendances Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copier le code de l'application
 COPY . .
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+# Créer les dossiers nécessaires
+RUN mkdir -p /app/app/uploads/exercises /app/app/uploads/submissions \
+    && chmod -R 755 /app/app/uploads
+
+# Exposer le port
+EXPOSE 8000
+
+# Commande pour démarrer l'application
+CMD ["gunicorn", "app.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"] 

@@ -5,9 +5,12 @@ from fastapi.staticfiles import StaticFiles
 from .api import auth, exercises, submissions, statistics, users, notifications
 from .db.database import Base, engine
 
-# Créer les dossiers nécessaires
-os.makedirs("uploads/exercises", exist_ok=True)
-os.makedirs("uploads/submissions", exist_ok=True)
+# Définir le chemin de base pour les uploads
+UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+
+# Créer les dossiers nécessaires avec des chemins absolus
+os.makedirs(os.path.join(UPLOAD_DIR, "exercises"), exist_ok=True)
+os.makedirs(os.path.join(UPLOAD_DIR, "submissions"), exist_ok=True)
 
 app = FastAPI(
     title="Plateforme d'Évaluation API",
@@ -16,9 +19,16 @@ app = FastAPI(
 )
 
 # Configuration CORS
+origins = [
+    "http://localhost:3000",
+    "https://projet-frontend-beta.vercel.app",
+    "https://projet-frontend-git-main-syabdoul.vercel.app",
+    "https://projet-frontend-syabdoul.vercel.app"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     allow_headers=["*"],
@@ -27,7 +37,7 @@ app.add_middleware(
 )
 
 # Monter le dossier uploads pour servir les fichiers statiques
-app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/api/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # Créer les tables de la base de données
 Base.metadata.create_all(bind=engine)

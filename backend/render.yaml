@@ -6,9 +6,7 @@ services:
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: evaluation_db
-          property: connectionString
+        value: postgresql://postgres:llYdnglwufTaaBqHydlU@db.llydnglwufTaaBqHydlU.supabase.co:5432/postgres
       - key: SECRET_KEY
         generateValue: true
       - key: ALGORITHM
@@ -16,11 +14,15 @@ services:
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: 30
       - key: ALLOWED_ORIGINS
-        value: https://votre-app-frontend.vercel.app,https://votre-app-admin.vercel.app
+        value: https://frontend-orcin-three-42.vercel.app,http://localhost:3000
       - key: UPLOAD_DIR
         value: /app/uploads
       - key: OLLAMA_API_URL
-        value: https://votre-ollama-service.onrender.com
+        value: https://platform-exo.onrender.com
+      - key: SUPABASE_URL
+        value: https://llydnglwufTaaBqHydlU.supabase.co
+      - key: SUPABASE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxseWRuZ2x3dWZ0YWFicWh5ZGx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0ODc3ODMsImV4cCI6MjA1ODA2Mzc4M30.WNy4Q4tSSx2r1zwWeZgdcckUvon2S0BakoJrB4ZAwFE
 
 databases:
   - name: evaluation_db

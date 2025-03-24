@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // URL de base de l'API
-export const API_URL = 'http://localhost:8000/api';
-export const UPLOADS_URL = 'http://localhost:8000/api/uploads';
+export const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+export const UPLOADS_URL = `${API_URL}/uploads`;
 
 // Configuration par défaut d'Axios
 axios.defaults.withCredentials = true;

@@ -1,163 +1,172 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaUser, FaLock, FaGoogle, FaGithub, FaMicrosoft } from 'react-icons/fa';
-import authService from '../../services/authService';
+import { FaEnvelope, FaLock, FaExclamationTriangle } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-  const [error, setError] = useState('');
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
     });
-  };
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await authService.login(formData.email, formData.password);
-      navigate('/dashboard');
-    } catch (error) {
-      setError('Email ou mot de passe incorrect');
-    }
-  };
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm p-10 rounded-xl shadow-2xl"
-      >
-        <div>
-          <motion.h2
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-center text-3xl font-extrabold text-gray-900"
-          >
-            Connexion
-          </motion.h2>
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        // Validation de base
+        if (!formData.email || !formData.password) {
+            setError('Veuillez remplir tous les champs');
+            return;
+        }
+        
+        try {
+            setIsSubmitting(true);
+            setError('');
+            
+            console.log('Tentative de connexion avec l\'email:', formData.email);
+            
+            // Utilise directement le contexte d'authentification au lieu du service
+            const userData = await login(formData.email, formData.password);
+            
+            console.log('Connexion réussie, utilisateur:', {
+                id: userData?.id,
+                role: userData?.role,
+                email: userData?.email
+            });
+            
+            navigate('/dashboard');
+        } catch (err) {
+            console.error('Erreur détaillée:', {
+                message: err.message,
+                status: err.response?.status,
+                statusText: err.response?.statusText,
+                data: err.response?.data
+            });
+            
+            // Messages d'erreur plus précis
+            if (err.response?.status === 401) {
+                setError('Email ou mot de passe incorrect');
+            } else if (err.response?.status === 404) {
+                setError('Service indisponible. Veuillez réessayer ultérieurement.');
+            } else {
+                setError(err.response?.data?.detail || 'Erreur lors de la connexion');
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-900 to-blue-800 py-12 px-4 sm:px-6 lg:px-8">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="max-w-md w-full space-y-8 bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg p-10 rounded-xl shadow-xl"
+            >
+                <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+                        Connexion
+                    </h2>
+                    <p className="mt-2 text-center text-sm text-indigo-200">
+                        Accédez à votre espace personnel
+                    </p>
+                </div>
+
+                {error && (
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md"
+                    >
+                        <div className="flex items-center">
+                            <FaExclamationTriangle className="h-5 w-5 text-red-500 mr-2" />
+                            <p>{error}</p>
+                        </div>
+                    </motion.div>
+                )}
+
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <div className="rounded-md shadow-sm space-y-4">
+                        <div>
+                            <label htmlFor="email" className="sr-only">Email</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <FaEnvelope className="h-5 w-5 text-indigo-300" />
+                                </div>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    required
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-400 border-opacity-30 placeholder-gray-300 text-white bg-transparent rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                    placeholder="Adresse email"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="sr-only">Mot de passe</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <FaLock className="h-5 w-5 text-indigo-300" />
+                                </div>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    required
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-400 border-opacity-30 placeholder-gray-300 text-white bg-transparent rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                    placeholder="Mot de passe"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-md text-white ${
+                                isSubmitting
+                                    ? 'bg-indigo-400'
+                                    : 'bg-indigo-600 hover:bg-indigo-700'
+                            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200`}
+                        >
+                            {isSubmitting ? 'Connexion en cours...' : 'Se connecter'}
+                        </button>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                        <div className="text-sm">
+                            <Link to="/register" className="font-medium text-indigo-200 hover:text-white transition-colors duration-200">
+                                Pas encore de compte ? S'inscrire
+                            </Link>
+                        </div>
+                        <div className="text-sm">
+                            <a href="#" className="font-medium text-indigo-200 hover:text-white transition-colors duration-200">
+                                Mot de passe oublié ?
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </motion.div>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <div className="flex items-center border-2 p-2 rounded-t-md">
-                <FaUser className="h-5 w-5 text-gray-400" />
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  className="ml-2 block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-0"
-                  placeholder="Adresse email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <div className="flex items-center border-2 p-2 rounded-b-md">
-                <FaLock className="h-5 w-5 text-gray-400" />
-                <input
-                  name="password"
-                  type="password"
-                  required
-                  className="ml-2 block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-0"
-                  placeholder="Mot de passe"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </div>
-            </motion.div>
-          </div>
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-red-500 text-center"
-            >
-              {error}
-            </motion.div>
-          )}
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-            >
-              Se connecter
-            </button>
-          </motion.div>
-        </form>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-6"
-        >
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
-                Ou continuer avec
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-3 gap-3">
-            <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-              <FaGoogle className="h-5 w-5 text-red-500" />
-            </button>
-            <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-              <FaGithub className="h-5 w-5 text-gray-900" />
-            </button>
-            <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-              <FaMicrosoft className="h-5 w-5 text-blue-500" />
-            </button>
-          </div>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="mt-2 text-center text-sm text-gray-600"
-        >
-          Pas encore de compte ?{' '}
-          <Link
-            to="/register"
-            className="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            S'inscrire
-          </Link>
-        </motion.p>
-      </motion.div>
-    </div>
-  );
+    );
 };
 
 export default Login; 

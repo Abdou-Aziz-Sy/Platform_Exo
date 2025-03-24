@@ -31,8 +31,8 @@
     }
   ],
   "env": {
-    "REACT_APP_API_URL": "https://votre-app-backend.onrender.com",
-    "REACT_APP_FRONTEND_URL": "https://votre-app-frontend.vercel.app",
-    "REACT_APP_ADMIN_URL": "https://votre-app-admin.vercel.app"
+    "REACT_APP_API_URL": "https://platform-exo.onrender.com",
+    "REACT_APP_FRONTEND_URL": "https://frontend-orcin-three-42.vercel.app",
+    "REACT_APP_ADMIN_URL": "https://frontend-orcin-three-42.vercel.app"
   }
 } 
