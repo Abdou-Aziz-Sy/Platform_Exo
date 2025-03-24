@@ -28,4 +28,4 @@ RUN mkdir -p /app/app/uploads/exercises /app/app/uploads/submissions \
 EXPOSE 8000
 
 # Commande pour démarrer l'application
-CMD ["gunicorn", "app.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"] 
+CMD ["gunicorn", "--config", "gunicorn_config.py", "app.main:app"] 
