@@ -24,16 +24,19 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ThemeToggle from './components/common/ThemeToggle';
 
-// Configuration globale d'Axios pour attacher le token à toutes les requêtes
+// Configuration globale d'Axios
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log('API URL:', process.env.REACT_APP_API_URL);
+    console.log('Request Config:', config);
     return config;
   },
   (error) => {
+    console.error('Request Error:', error);
     return Promise.reject(error);
   }
 );
@@ -43,6 +46,9 @@ const PrivateRoute = ({ children, requiredRole }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
+  console.log('PrivateRoute - User:', user);
+  console.log('PrivateRoute - Loading:', loading);
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-900 to-blue-800">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
@@ -50,26 +56,31 @@ const PrivateRoute = ({ children, requiredRole }) => {
   }
 
   if (!user) {
+    console.log('PrivateRoute - Redirecting to login');
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (requiredRole && user.role !== requiredRole) {
+    console.log('PrivateRoute - Invalid role, redirecting to dashboard');
     return <Navigate to="/dashboard" replace />;
   }
 
   return children;
 };
 
-// Composant pour le routage du dashboard basé sur le rôle
+// Composant pour le routage du dashboard
 const DashboardRoute = () => {
   const { user } = useAuth();
+  console.log('DashboardRoute - User Role:', user?.role);
   return user?.role === 'professor' ? <ProfessorDashboard /> : <StudentDashboard />;
 };
 
-// Composant pour gérer l'affichage conditionnel de la navbar
+// Composant pour la navigation
 const NavigationWrapper = () => {
   const location = useLocation();
   const publicRoutes = ['/', '/login', '/register'];
+  
+  console.log('NavigationWrapper - Current Path:', location.pathname);
   
   if (publicRoutes.includes(location.pathname)) {
     return null;
@@ -78,8 +89,12 @@ const NavigationWrapper = () => {
   return <Navigation />;
 };
 
-// Composant principal de l'application
+// Composant principal
 function AppContent() {
+  console.log('AppContent - Rendering');
+  console.log('Environment:', process.env.NODE_ENV);
+  console.log('API URL:', process.env.REACT_APP_API_URL);
+
   return (
     <Router>
       <div className="transition-colors duration-200">
@@ -158,8 +173,18 @@ function AppContent() {
   );
 }
 
-// Composant racine qui gère les providers
+// Composant racine
 function App() {
+  console.log('App - Initial Render');
+  
+  useEffect(() => {
+    console.log('App - Environment Variables:');
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+    console.log('REACT_APP_FRONTEND_URL:', process.env.REACT_APP_FRONTEND_URL);
+    console.log('REACT_APP_ADMIN_URL:', process.env.REACT_APP_ADMIN_URL);
+  }, []);
+
   return (
     <ThemeProvider>
       <AuthProvider>
