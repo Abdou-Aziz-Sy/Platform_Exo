@@ -231,7 +231,7 @@ const ExerciseDetails = () => {
                                         {submitStatus}
                                     </div>
                                 )}
-                            </form>
+                        </form>
                         </motion.div>
                     )}
 
