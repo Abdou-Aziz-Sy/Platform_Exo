@@ -23,7 +23,10 @@ origins = [
     "http://localhost:3000",
     "https://projet-frontend-beta.vercel.app",
     "https://projet-frontend-git-main-syabdoul.vercel.app",
-    "https://projet-frontend-syabdoul.vercel.app"
+    "https://projet-frontend-syabdoul.vercel.app",
+    "https://frontend-orcin-three-42.vercel.app",
+    "https://frontend-git-main-abdou-aziz-sys-projects-58fc1331.vercel.app",
+    "https://frontend-2dja7zqg0-abdou-aziz-sys-projects-58fc1331.vercel.app"
 ]
 
 app.add_middleware(
