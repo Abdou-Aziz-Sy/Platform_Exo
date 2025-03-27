@@ -1,9 +1,14 @@
 import os
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from .api import auth, exercises, submissions, statistics, users, notifications
 from .db.database import Base, engine
+
+# Configuration du logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Définir le chemin de base pour les uploads
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
@@ -26,18 +31,31 @@ origins = [
     "https://projet-frontend-syabdoul.vercel.app",
     "https://frontend-orcin-three-42.vercel.app",
     "https://frontend-git-main-abdou-aziz-sys-projects-58fc1331.vercel.app",
-    "https://frontend-2dja7zqg0-abdou-aziz-sys-projects-58fc1331.vercel.app"
+    "https://frontend-2dja7zqg0-abdou-aziz-sys-projects-58fc1331.vercel.app",
+    "https://frontend-git-main-abdou-aziz-sys-projects-58fc1331.vercel.app",
+    "*"  # Temporairement pour le debugging
 ]
+
+logger.info("Domaines autorisés pour CORS: %s", origins)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
+    allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
     max_age=3600,
 )
+
+# Middleware pour logger les requêtes
+@app.middleware("http")
+async def log_requests(request, call_next):
+    logger.info(f"Requête reçue: {request.method} {request.url}")
+    logger.info(f"Headers: {request.headers}")
+    response = await call_next(request)
+    logger.info(f"Réponse: Status {response.status_code}")
+    return response
 
 # Monter le dossier uploads pour servir les fichiers statiques
 app.mount("/api/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
